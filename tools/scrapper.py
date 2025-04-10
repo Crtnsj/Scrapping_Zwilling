@@ -24,22 +24,6 @@ def save_page_source(file_path):
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(driver.page_source)
 
-
-def get_description():
-    try:
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, '[aria-controls="product-description-panel"]')
-            )
-        ).click()
-        WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.ID, "product-description-panel"))
-        )
-        return driver.find_element(By.ID, "product-description-panel").text
-    except:
-        return ""
-
-
 def get_teaser():
     try:
         return (
@@ -73,7 +57,38 @@ def get_pics():
             EC.presence_of_element_located((By.CSS_SELECTOR, ".gallery__main-image"))
         )
         return [re.sub(r"(sw=|sh=)\d+", r"\g<1>800", pic.get_attribute("srcset"))]
+    
+def get_description():
+    try:
 
+        try:
+            WebDriverWait(driver, 10).until(
+                EC.visibility_of_element_located((By.CSS_SELECTOR, '[aria-controls="product-description-panel"]'))
+            ).click()
+            chars_div = WebDriverWait(driver, 5).until(
+                EC.visibility_of_element_located(
+                    (By.ID, "product-description-panel")
+                )
+            )
+
+        except:
+            print("je n'ai pas ouvert du premier coup")
+            WebDriverWait(driver, 10).until(
+                EC.visibility_of_element_located(
+                    (By.CSS_SELECTOR, '[aria-controls="product-description-panel"]')
+                )
+            ).click()
+            print("j'ai ouvert au deuxième coup")
+            chars_div = WebDriverWait(driver, 10).until(
+                EC.visibility_of_element_located(
+                    (By.ID, "product-description-panel")
+                )
+            )
+        return driver.find_element(By.ID, "product-description-panel").text
+
+    except Exception as e:
+        print(e)
+        return ""
 
 def get_chars():
     try:
