@@ -78,51 +78,74 @@ def get_pics():
 def get_chars():
     try:
 
-        product_information = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.ID, "product-specifications-header"))
-        )
-        product_information.find_element(By.TAG_NAME, "button").click()
         try:
+            WebDriverWait(driver, 10).until(
+                EC.visibility_of_element_located((By.CSS_SELECTOR, '[aria-controls="product-specifications-panel"]'))
+            ).click()
             chars_div = WebDriverWait(driver, 5).until(
                 EC.visibility_of_element_located(
                     (By.ID, "product-specifications-panel")
                 )
             )
+            WebDriverWait(chars_div, 5).until(
+            EC.presence_of_element_located((By.XPATH, "(//li)[last()]"))
+            )   
+            chars = chars_div.find_elements(By.TAG_NAME, "li")
+            full_chars = ""
+            time.sleep(1)
+            for char in chars:
+                try:
+                    spans = char.find_elements(By.TAG_NAME, "span")
+                    char_name = spans[0].text
+                    char_value = spans[1].text
+                    if char_name != "NO d’article":
+                        full_chars += (
+                            str.replace(char_name, ":", "")
+                            + ": "
+                            + str.replace(char_value, ",", ".")
+                            + ": 0:1,"
+                        )
+                except:
+                    pass
+            time.sleep(1)
         except:
-            product_information = WebDriverWait(driver, 10).until(
+            print("je n'ai pas ouvert du premier coup")
+            WebDriverWait(driver, 10).until(
                 EC.visibility_of_element_located(
-                    (By.ID, "product-specifications-header")
+                    (By.CSS_SELECTOR, '[aria-controls="product-specifications-panel"]')
                 )
-            )
-            product_information.find_element(By.TAG_NAME, "button").click()
-
+            ).click()
+            print("j'ai ouvert au deuxième coup")
             chars_div = WebDriverWait(driver, 10).until(
                 EC.visibility_of_element_located(
                     (By.ID, "product-specifications-panel")
                 )
             )
-        WebDriverWait(chars_div, 5).until(
-            EC.presence_of_element_located((By.XPATH, "(//li)[last()]"))
-        )
-        chars = chars_div.find_elements(By.TAG_NAME, "li")
-        full_chars = ""
-        time.sleep(0.5)
-        for char in chars:
-            try:
-                spans = char.find_elements(By.TAG_NAME, "span")
-                char_name = spans[0].text
-                char_value = spans[1].text
-                if char_name != "NO d’article":
-                    full_chars += (
-                        str.replace(char_name, ":", "")
-                        + ": "
-                        + str.replace(char_value, ",", ".")
-                        + ": 0:1,"
-                    )
-            except:
-                pass
+            WebDriverWait(chars_div, 5).until(
+                EC.presence_of_element_located((By.XPATH, "(//li)[last()]"))
+            )
+            chars = chars_div.find_elements(By.TAG_NAME, "li")
+            full_chars = ""
+            time.sleep(1)
+            for char in chars:
+                try:
+                    spans = char.find_elements(By.TAG_NAME, "span")
+                    char_name = spans[0].text
+                    char_value = spans[1].text
+                    if char_name != "NO d’article":
+                        full_chars += (
+                            str.replace(char_name, ":", "")
+                            + ": "
+                            + str.replace(char_value, ",", ".")
+                            + ": 0:1,"
+                        )
+                except:
+                    pass
+            time.sleep(1)
+       
         return full_chars
-    except:
+    except Exception as e:
+        print(e)
         return ""
 
 

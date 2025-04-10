@@ -23,7 +23,7 @@ Prepocessing the data
 
 if __name__ == "__main__":
     urls = pl.read_csv(
-        "./dataframes/urls_for_test.csv", schema_overrides={"ref": pl.Utf8}
+        "./dataframes/urls.csv", schema_overrides={"ref": pl.Utf8}
     )
     priceList = pl.read_csv(
         "./dataframes/Prices.csv", schema_overrides={"REF": pl.Utf8, "PCB": pl.Utf8}
@@ -32,4 +32,4 @@ if __name__ == "__main__":
         urls,
         priceList,
     )
-    data.write_csv("./dataframes/test.csv")
+    data.write_csv("./dataframes/data.csv")
